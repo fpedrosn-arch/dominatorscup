@@ -660,12 +660,12 @@
         return;
       }
 
-      const tempo1 = $("#tempo1").value.trim();
-      const tempo2 = $("#tempo2").value.trim();
+      const time1 = $("#time1").value.trim();
+      const time2 = $("#time2").value.trim();
       const gols1 = Number($("#gols1").value);
       const gols2 = Number($("#gols2").value);
 
-      if (!tempo1 || !tempo2 || Number.isNaN(gols1) || Number.isNaN(gols2)) {
+      if (!time1 || !time2 || Number.isNaN(gols1) || Number.isNaN(gols2)) {
         alert("Preencha todos os campos do jogo.");
         return;
       }
@@ -676,15 +676,15 @@
           APPWRITE_COLLECTION_ID,
           ID.unique(),
           {
-            tempo1,
-            tempo2,
+            time1,
+            time2,
             gols1,
             gols2
           }
         );
 
-        $("#tempo1").value = "";
-        $("#tempo2").value = "";
+        $("#time1").value = "";
+        $("#time2").value = "";
         $("#gols1").value = "";
         $("#gols2").value = "";
 
@@ -725,9 +725,9 @@
                     jogos.length
                       ? jogos.map(j => `
                         <tr>
-                          <td>${j.tempo1 ?? "-"}</td>
+                          <td>${j.time1 ?? "-"}</td>
                           <td>${j.gols1 ?? 0} x ${j.gols2 ?? 0}</td>
-                          <td>${j.tempo2 ?? "-"}</td>
+                          <td>${j.time2 ?? "-"}</td>
                         </tr>
                       `).join("")
                       : `<tr><td colspan="3">Nenhum jogo cadastrado ainda.</td></tr>`
@@ -744,8 +744,8 @@
       const tabela = {};
 
       jogos.forEach(j => {
-        const t1 = j.tempo1;
-        const t2 = j.tempo2;
+        const t1 = j.time1;
+        const t2 = j.time2;
         const g1 = Number(j.gols1);
         const g2 = Number(j.gols2);
 
@@ -951,7 +951,7 @@
                 <div class="form-grid">
                   <div class="field">
                     <label>Time 1</label>
-                    <input id="tempo1" placeholder="Ex: TOG" ${!currentUser ? "disabled" : ""} />
+                    <input id="time1" placeholder="Ex: TOG" ${!currentUser ? "disabled" : ""} />
                   </div>
                   <div class="field">
                     <label>Time 2</label>
