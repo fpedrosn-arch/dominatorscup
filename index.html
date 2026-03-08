@@ -1,1037 +1,363 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Dominators Cup</title>
-  <meta name="theme-color" content="#081225" />
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
-  <style>
-    :root{
-      --bg:#040816;
-      --bg2:#081225;
-      --panel:#0d1830;
-      --panel2:#111f3c;
-      --line:rgba(255,255,255,.08);
-      --text:#eef4ff;
-      --muted:#9fb2d6;
-      --blue:#4ea1ff;
-      --purple:#8b5cf6;
-      --green:#16c784;
-      --red:#ff5f6d;
-      --gold:#fbbf24;
-      --shadow:0 18px 40px rgba(0,0,0,.35);
-      --radius:24px;
-    }
-
-    *{box-sizing:border-box}
-    html,body{
-      margin:0;
-      min-height:100%;
-      font-family:Inter,Segoe UI,Arial,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top, rgba(78,161,255,.12), transparent 26%),
-        radial-gradient(circle at 80% 10%, rgba(139,92,246,.10), transparent 24%),
-        linear-gradient(180deg,#07101f 0%, #040816 100%);
-    }
-
-    button,input{
-      font:inherit;
-    }
-
-    .hidden{display:none!important}
-
-    .welcome{
-      position:fixed;
-      inset:0;
-      z-index:1000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      background:
-        radial-gradient(circle at top, rgba(78,161,255,.18), transparent 28%),
-        radial-gradient(circle at 70% 20%, rgba(139,92,246,.15), transparent 24%),
-        linear-gradient(180deg,#07101f 0%, #040816 100%);
-    }
-
-    .welcome-card{
-      width:min(1040px,100%);
-      border:1px solid var(--line);
-      border-radius:34px;
-      overflow:hidden;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
-      backdrop-filter:blur(14px);
-      box-shadow:var(--shadow);
-    }
-
-    .welcome-hero{
-      padding:42px 28px 24px;
-      text-align:center;
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 18px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.05);
-      color:var(--muted);
-      font-size:13px;
-      font-weight:800;
-    }
-
-    .welcome h1{
-      margin:20px 0 12px;
-      font-size:clamp(34px,6vw,62px);
-      line-height:.95;
-      letter-spacing:-1.6px;
-    }
-
-    .gradient{
-      background:linear-gradient(90deg,#9ad0ff 0%, #4ea1ff 35%, #8b5cf6 75%, #d8b4fe 100%);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-    }
-
-    .welcome p{
-      max-width:760px;
-      margin:0 auto;
-      color:var(--muted);
-      font-size:16px;
-      line-height:1.6;
-    }
-
-    .welcome-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:14px;
-      padding:0 24px 8px;
-    }
-
-    .hero-box{
-      border:1px solid var(--line);
-      border-radius:24px;
-      background:rgba(255,255,255,.04);
-      padding:18px;
-    }
-
-    .hero-box strong{
-      display:block;
-      margin-bottom:8px;
-      font-size:15px;
-    }
-
-    .hero-box span{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.5;
-    }
-
-    .welcome-actions{
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      padding:24px 24px 30px;
-      flex-wrap:wrap;
-    }
-
-    .app{
-      max-width:1240px;
-      margin:0 auto;
-      padding:14px;
-      padding-bottom:90px;
-    }
-
-    .topbar{
-      position:sticky;
-      top:12px;
-      z-index:100;
-      border:1px solid var(--line);
-      border-radius:28px;
-      overflow:hidden;
-      background:rgba(8,18,37,.84);
-      backdrop-filter:blur(14px);
-      box-shadow:var(--shadow);
-      margin-bottom:18px;
-    }
-
-    .topbar-main{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:14px;
-      flex-wrap:wrap;
-      padding:16px 18px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-
-    .brand-logo{
-      width:58px;
-      height:58px;
-      border-radius:20px;
-      display:grid;
-      place-items:center;
-      font-size:28px;
-      background:linear-gradient(135deg, rgba(78,161,255,.18), rgba(139,92,246,.16));
-      border:1px solid rgba(255,255,255,.12);
-    }
-
-    .brand h2{
-      margin:0;
-      font-size:22px;
-      letter-spacing:-.4px;
-    }
-
-    .brand small{
-      display:block;
-      margin-top:4px;
-      color:var(--muted);
-      font-size:12px;
-      font-weight:700;
-    }
-
-    .status-wrap{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      color:var(--muted);
-      font-size:12px;
-      font-weight:900;
-    }
-
-    .dot{
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background:#6b7280;
-    }
-
-    .dot.ok{background:var(--green)}
-    .dot.warn{background:var(--gold)}
-
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      padding:14px 18px 18px;
-    }
-
-    .tab{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
-      color:var(--text);
-      border-radius:16px;
-      padding:12px 16px;
-      cursor:pointer;
-      font-weight:900;
-    }
-
-    .tab.active{
-      background:linear-gradient(90deg, rgba(78,161,255,.18), rgba(139,92,246,.16));
-      border-color:rgba(78,161,255,.28);
-    }
-
-    .view{display:none}
-    .view.active{display:block}
-
-    .btn{
-      border:none;
-      cursor:pointer;
-      color:#fff;
-      border-radius:16px;
-      padding:12px 18px;
-      font-weight:900;
-      transition:.18s ease;
-    }
-
-    .btn:hover{transform:translateY(-1px);filter:brightness(1.04)}
-    .btn:active{transform:translateY(0)}
-
-    .btn-primary{
-      background:linear-gradient(90deg,var(--blue),var(--purple));
-    }
-
-    .btn-secondary{
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-    }
-
-    .btn-danger{
-      background:linear-gradient(90deg,#ff5f6d,#ff7b54);
-    }
-
-    .panel{
-      border:1px solid var(--line);
-      border-radius:28px;
-      overflow:hidden;
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
-      box-shadow:var(--shadow);
-      margin-bottom:16px;
-    }
-
-    .panel-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      padding:18px 20px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.03);
-    }
-
-    .panel-head h3{
-      margin:0;
-      font-size:19px;
-    }
-
-    .hint{
-      color:var(--muted);
-      font-size:13px;
-      font-weight:700;
-    }
-
-    .panel-body{
-      padding:18px 20px;
-    }
-
-    .stats{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin-bottom:16px;
-    }
-
-    .stat{
-      border:1px solid var(--line);
-      border-radius:22px;
-      background:rgba(255,255,255,.04);
-      padding:18px 16px;
-    }
-
-    .stat strong{
-      display:block;
-      font-size:28px;
-      margin-bottom:8px;
-    }
-
-    .stat span{
-      color:var(--muted);
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .form-grid{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:12px;
-    }
-
-    .field{
-      display:grid;
-      gap:7px;
-    }
-
-    .field label{
-      font-size:13px;
-      color:var(--muted);
-      font-weight:900;
-    }
-
-    .field input{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      padding:14px;
-      border-radius:16px;
-      outline:none;
-      font-weight:800;
-    }
-
-    .field input:focus{
-      border-color:rgba(78,161,255,.34);
-      box-shadow:0 0 0 4px rgba(78,161,255,.10);
-    }
-
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      min-width:720px;
-    }
-
-    .table-wrap{overflow:auto}
-
-    thead th{
-      color:var(--muted);
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.5px;
-      text-align:left;
-      padding:13px 10px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-
-    tbody td{
-      padding:14px 10px;
-      border-bottom:1px solid rgba(255,255,255,.05);
-      font-size:14px;
-      font-weight:800;
-    }
-
-    tbody tr:nth-child(1),
-    tbody tr:nth-child(2){
-      background:rgba(22,199,132,.07);
-    }
-
-    .chat{
-      border:1px solid var(--line);
-      border-radius:24px;
-      overflow:hidden;
-      background:rgba(255,255,255,.04);
-    }
-
-    .chat-messages{
-      height:360px;
-      overflow:auto;
-      padding:16px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .msg{
-      max-width:85%;
-      padding:12px 14px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.08);
-      font-size:14px;
-      line-height:1.5;
-      font-weight:700;
-    }
-
-    .msg.user{
-      align-self:flex-end;
-      background:rgba(78,161,255,.12);
-    }
-
-    .msg.bot{
-      align-self:flex-start;
-      background:rgba(255,255,255,.05);
-    }
-
-    .chat-input{
-      display:flex;
-      gap:8px;
-      padding:12px;
-      border-top:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.03);
-    }
-
-    .chat-input input{
-      flex:1;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      padding:14px;
-      border-radius:16px;
-      outline:none;
-      font-weight:800;
-    }
-
-    .info-box{
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.04);
-      border-radius:20px;
-      padding:15px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.55;
-    }
-
-    .footer-note{
-      text-align:center;
-      color:var(--muted);
-      font-size:12px;
-      margin-top:16px;
-      font-weight:700;
-    }
-
-    @media (max-width:980px){
-      .welcome-grid,.stats,.form-grid{
-        grid-template-columns:1fr;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Dominators Cup</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+}
+
+header{
+background:#020617;
+padding:15px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+}
+
+nav{
+display:flex;
+justify-content:space-around;
+background:#1e293b;
+padding:10px;
+}
+
+nav button{
+background:none;
+border:none;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+section{
+display:none;
+padding:20px;
+}
+
+.active{
+display:block;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th,td{
+border:1px solid #334155;
+padding:10px;
+text-align:center;
+}
+
+input{
+padding:8px;
+margin:5px;
+border-radius:5px;
+border:none;
+}
+
+button{
+padding:10px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.card{
+background:#1e293b;
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+</style>
 </head>
+
 <body>
-  <div class="welcome" id="welcomeScreen">
-    <div class="welcome-card">
-      <div class="welcome-hero">
-        <div class="chip">🚀 APP OFICIAL • DOMINATORS CUP</div>
-        <h1>Entre na arena da <span class="gradient">Dominators Cup</span></h1>
-        <p>Um painel bonito e moderno para acompanhar jogos, classificação automática, área de administradores e assistente da competição.</p>
-      </div>
-
-      <div class="welcome-grid">
-        <div class="hero-box">
-          <strong>🎮 Jogos em tempo real</strong>
-          <span>Cadastre partidas e acompanhe os resultados salvos online.</span>
-        </div>
-        <div class="hero-box">
-          <strong>🏆 Classificação automática</strong>
-          <span>A tabela é atualizada sozinha conforme os placares entram.</span>
-        </div>
-        <div class="hero-box">
-          <strong>🤖 Assistente do torneio</strong>
-          <span>Faça perguntas sobre líderes, jogos e regras da competição.</span>
-        </div>
-      </div>
-
-      <div class="welcome-actions">
-        <button class="btn btn-primary" id="startAppBtn">Prosseguir para o app</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="app">
-    <header class="topbar">
-      <div class="topbar-main">
-        <div class="brand">
-          <div class="brand-logo">🏆</div>
-          <div>
-            <h2>Dominators Cup</h2>
-            <small>Painel oficial da competição</small>
-          </div>
-        </div>
-
-        <div class="status-wrap">
-          <div class="pill" id="statusPill">
-            <span class="dot warn" id="statusDot"></span>
-            <span id="statusText">Modo público</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="tabs">
-        <button class="tab active" data-view="jogos">🎮 Jogos</button>
-        <button class="tab" data-view="classificacao">📊 Classificação</button>
-        <button class="tab" data-view="assistente">🤖 Assistente</button>
-        <button class="tab" data-view="adm">🔒 ADM</button>
-      </div>
-    </header>
-
-    <section class="view active" id="view-jogos"></section>
-    <section class="view" id="view-classificacao"></section>
-    <section class="view" id="view-assistente"></section>
-    <section class="view" id="view-adm"></section>
-
-    <div class="footer-note">Conectado ao Appwrite • placares salvos online</div>
-  </div>
-
-  <script>
-    const {
-      Client,
-      Account,
-      Databases,
-      ID,
-      Query
-    } = Appwrite;
-
-    const APPWRITE_ENDPOINT = "https://sfo.cloud.appwrite.io/v1";
-    const APPWRITE_PROJECT_ID = "69acaf3f003a7c46d555";
-    const APPWRITE_DATABASE_ID = "69acb01700212f425e07";
-    const APPWRITE_COLLECTION_ID = "jogos";
-
-    const client = new Client()
-      .setEndpoint(APPWRITE_ENDPOINT)
-      .setProject(APPWRITE_PROJECT_ID);
-
-    const account = new Account(client);
-    const databases = new Databases(client);
-
-    let currentUser = null;
-    let jogos = [];
-
-    const $ = (sel) => document.querySelector(sel);
-    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-
-    function initWelcome() {
-      const seen = localStorage.getItem("dominators_welcome_seen") === "1";
-      if (seen) $("#welcomeScreen").classList.add("hidden");
-
-      $("#startAppBtn").addEventListener("click", () => {
-        localStorage.setItem("dominators_welcome_seen", "1");
-        $("#welcomeScreen").classList.add("hidden");
-      });
-    }
-
-    function atualizarStatus() {
-      const dot = $("#statusDot");
-      const text = $("#statusText");
-
-      if (currentUser) {
-        dot.className = "dot ok";
-        text.textContent = `ADM: ${currentUser.email}`;
-      } else {
-        dot.className = "dot warn";
-        text.textContent = "Modo público";
-      }
-    }
-
-    async function verificarSessao() {
-      try {
-        currentUser = await account.get();
-      } catch {
-        currentUser = null;
-      }
-      atualizarStatus();
-    }
-
-    async function fazerLogin(email, senha) {
-      try {
-        await account.createEmailSession(email, senha);
-        await verificarSessao();
-        renderAdm();
-      } catch (erro) {
-        alert("Erro no login: " + erro.message);
-      }
-    }
-
-    async function sair() {
-      try {
-        await account.deleteSession("current");
-      } catch {}
-      currentUser = null;
-      atualizarStatus();
-      renderAdm();
-    }
-
-    async function carregarJogos() {
-      try {
-        const resposta = await databases.listDocuments(
-          APPWRITE_DATABASE_ID,
-          APPWRITE_COLLECTION_ID,
-          [Query.orderDesc("$createdAt")]
-        );
-
-        jogos = resposta.documents || [];
-      } catch (erro) {
-        console.error("Erro ao carregar jogos:", erro);
-        jogos = [];
-      }
-
-      renderJogos();
-      renderClassificacao();
-      renderAssistente();
-    }
-
-    async function adicionarJogo() {
-      if (!currentUser) {
-        alert("Você precisa estar logado como administrador.");
-        return;
-      }
-
-      const time1 = $("#time1").value.trim();
-      const time2 = $("#time2").value.trim();
-      const gols1 = Number($("#gols1").value);
-      const gols2 = Number($("#gols2").value);
-
-      if (!time1 || !time2 || Number.isNaN(gols1) || Number.isNaN(gols2)) {
-        alert("Preencha todos os campos do jogo.");
-        return;
-      }
-
-      try {
-        await databases.createDocument(
-          APPWRITE_DATABASE_ID,
-          APPWRITE_COLLECTION_ID,
-          ID.unique(),
-          {
-            time1,
-            time2,
-            gols1,
-            gols2
-          }
-        );
-
-        $("#time1").value = "";
-        $("#time2").value = "";
-        $("#gols1").value = "";
-        $("#gols2").value = "";
-
-        await carregarJogos();
-        $("#admMsg").textContent = "Jogo adicionado com sucesso.";
-      } catch (erro) {
-        console.error(erro);
-        alert("Erro ao adicionar jogo: " + erro.message);
-      }
-    }
-
-    function renderJogos() {
-      $("#view-jogos").innerHTML = `
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Jogos cadastrados</h3>
-            <div class="hint">Lista de partidas salvas no banco</div>
-          </div>
-          <div class="panel-body">
-            <div class="stats">
-              <div class="stat"><strong>${jogos.length}</strong><span>Jogos cadastrados</span></div>
-              <div class="stat"><strong>${jogos.reduce((s,j)=>s+(Number(j.gols1||0)+Number(j.gols2||0)),0)}</strong><span>Total de gols</span></div>
-              <div class="stat"><strong>${currentUser ? "Sim" : "Não"}</strong><span>Modo ADM</span></div>
-              <div class="stat"><strong>${jogos.length ? "Ativo" : "Vazio"}</strong><span>Status da competição</span></div>
-            </div>
-
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Time 1</th>
-                    <th>Placar</th>
-                    <th>Time 2</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${
-                    jogos.length
-                      ? jogos.map(j => `
-                        <tr>
-                          <td>${j.time1 ?? "-"}</td>
-                          <td>${j.gols1 ?? 0} x ${j.gols2 ?? 0}</td>
-                          <td>${j.time2 ?? "-"}</td>
-                        </tr>
-                      `).join("")
-                      : `<tr><td colspan="3">Nenhum jogo cadastrado ainda.</td></tr>`
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function calcularClassificacao() {
-      const tabela = {};
-
-      jogos.forEach(j => {
-        const t1 = j.time1;
-        const t2 = j.time2;
-        const g1 = Number(j.gols1);
-        const g2 = Number(j.gols2);
-
-        if (!t1 || !t2 || Number.isNaN(g1) || Number.isNaN(g2)) return;
-
-        if (!tabela[t1]) tabela[t1] = { time:t1, p:0, j:0, v:0, e:0, d:0, gm:0, gs:0, sg:0 };
-        if (!tabela[t2]) tabela[t2] = { time:t2, p:0, j:0, v:0, e:0, d:0, gm:0, gs:0, sg:0 };
-
-        tabela[t1].j++;
-        tabela[t2].j++;
-        tabela[t1].gm += g1;
-        tabela[t1].gs += g2;
-        tabela[t2].gm += g2;
-        tabela[t2].gs += g1;
-
-        if (g1 > g2) {
-          tabela[t1].v++;
-          tabela[t1].p += 3;
-          tabela[t2].d++;
-        } else if (g2 > g1) {
-          tabela[t2].v++;
-          tabela[t2].p += 3;
-          tabela[t1].d++;
-        } else {
-          tabela[t1].e++;
-          tabela[t2].e++;
-          tabela[t1].p++;
-          tabela[t2].p++;
-        }
-      });
-
-      Object.values(tabela).forEach(t => {
-        t.sg = t.gm - t.gs;
-      });
-
-      return Object.values(tabela).sort((a,b) => b.p - a.p || b.sg - a.sg || b.gm - a.gm);
-    }
-
-    function renderClassificacao() {
-      const classificacao = calcularClassificacao();
-
-      $("#view-classificacao").innerHTML = `
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Classificação automática</h3>
-            <div class="hint">3 pontos por vitória • 1 por empate</div>
-          </div>
-          <div class="panel-body">
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Time</th>
-                    <th>P</th>
-                    <th>J</th>
-                    <th>V</th>
-                    <th>E</th>
-                    <th>D</th>
-                    <th>GM</th>
-                    <th>GS</th>
-                    <th>SG</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${
-                    classificacao.length
-                      ? classificacao.map((t,i) => `
-                        <tr>
-                          <td>${i+1}</td>
-                          <td>${t.time}</td>
-                          <td>${t.p}</td>
-                          <td>${t.j}</td>
-                          <td>${t.v}</td>
-                          <td>${t.e}</td>
-                          <td>${t.d}</td>
-                          <td>${t.gm}</td>
-                          <td>${t.gs}</td>
-                          <td>${t.sg}</td>
-                        </tr>
-                      `).join("")
-                      : `<tr><td colspan="10">Sem dados para classificação ainda.</td></tr>`
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function respostaAssistente(texto) {
-      const q = texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      const tabela = calcularClassificacao();
-
-      if (q.includes("lider") || q.includes("líder") || q.includes("primeiro")) {
-        if (!tabela.length) return "Ainda não existe líder porque não há jogos suficientes.";
-        return `O líder atual é <b>${tabela[0].time}</b> com <b>${tabela[0].p} pontos</b>.`;
-      }
-
-      if (q.includes("quantos jogos")) {
-        return `A competição tem <b>${jogos.length}</b> jogos cadastrados no momento.`;
-      }
-
-      if (q.includes("quantos gols")) {
-        const total = jogos.reduce((s,j)=>s+(Number(j.gols1||0)+Number(j.gols2||0)),0);
-        return `Foram marcados <b>${total}</b> gols até agora.`;
-      }
-
-      if (q.includes("admin")) {
-        return currentUser
-          ? `Existe um administrador logado agora: <b>${currentUser.email}</b>.`
-          : "Nenhum administrador está logado no momento.";
-      }
-
-      if (q.includes("regras") || q.includes("pontuacao") || q.includes("pontuação")) {
-        return "Pontuação padrão: <b>3 pontos por vitória</b>, <b>1 ponto por empate</b> e <b>0 ponto por derrota</b>.";
-      }
-
-      return "Tente perguntar algo como: <b>quem é o líder?</b>, <b>quantos jogos existem?</b>, <b>quantos gols já saíram?</b> ou <b>quais são as regras?</b>";
-    }
-
-    function renderAssistente() {
-      $("#view-assistente").innerHTML = `
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Assistente da competição</h3>
-            <div class="hint">Pergunte sobre líder, jogos, gols e regras</div>
-          </div>
-          <div class="panel-body">
-            <div class="chat">
-              <div class="chat-messages" id="chatMessages">
-                <div class="msg bot">Oi! Eu sou o assistente da Dominators Cup. Pergunte sobre os jogos e a classificação.</div>
-              </div>
-              <div class="chat-input">
-                <input id="chatInput" placeholder="Ex: quem é o líder?" />
-                <button class="btn btn-primary" id="chatSend">Enviar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      const send = () => {
-        const input = $("#chatInput");
-        const msg = input.value.trim();
-        if (!msg) return;
-
-        const box = $("#chatMessages");
-        box.innerHTML += `<div class="msg user">${msg}</div>`;
-        box.innerHTML += `<div class="msg bot">${respostaAssistente(msg)}</div>`;
-        box.scrollTop = box.scrollHeight;
-        input.value = "";
-      };
-
-      $("#chatSend").onclick = send;
-      $("#chatInput").addEventListener("keydown", (e) => {
-        if (e.key === "Enter") send();
-      });
-    }
-
-    function renderAdm() {
-      $("#view-adm").innerHTML = `
-        <div class="panel">
-          <div class="panel-head">
-            <h3>Painel do administrador</h3>
-            <div class="hint">Só o admin pode cadastrar partidas</div>
-          </div>
-          <div class="panel-body">
-            ${
-              currentUser
-                ? `
-                <div class="info-box" style="margin-bottom:16px">
-                  Você está logado como <b>${currentUser.email}</b>.
-                </div>
-                <div class="actions" style="margin-bottom:18px">
-                  <button class="btn btn-danger" id="logoutBtn">Sair do modo ADM</button>
-                </div>
-                `
-                : `
-                <div class="form-grid">
-                  <div class="field">
-                    <label>E-mail</label>
-                    <input id="emailAdm" type="email" placeholder="admin@dominators.com" />
-                  </div>
-                  <div class="field">
-                    <label>Senha</label>
-                    <input id="senhaAdm" type="password" placeholder="Sua senha" />
-                  </div>
-                </div>
-                <div class="actions" style="margin-bottom:18px">
-                  <button class="btn btn-primary" id="loginBtn">Entrar</button>
-                </div>
-                `
-            }
-
-            <div class="panel" style="margin:0">
-              <div class="panel-head">
-                <h3>Adicionar jogo</h3>
-                <div class="hint">Cadastro direto pelo app</div>
-              </div>
-              <div class="panel-body">
-                <div class="form-grid">
-                  <div class="field">
-                    <label>Time 1</label>
-                    <input id="time1" placeholder="Ex: TOG" ${!currentUser ? "disabled" : ""} />
-                  </div>
-                  <div class="field">
-                    <label>Time 2</label>
-                    <input id="tempo2" placeholder="Ex: Sky Elite" ${!currentUser ? "disabled" : ""} />
-                  </div>
-                  <div class="field">
-                    <label>Gols do Time 1</label>
-                    <input id="gols1" type="number" placeholder="0" ${!currentUser ? "disabled" : ""} />
-                  </div>
-                  <div class="field">
-                    <label>Gols do Time 2</label>
-                    <input id="gols2" type="number" placeholder="0" ${!currentUser ? "disabled" : ""} />
-                  </div>
-                </div>
-
-                <div class="actions">
-                  <button class="btn btn-primary" id="addGameBtn" ${!currentUser ? "disabled" : ""}>Adicionar jogo</button>
-                </div>
-
-                <div class="info-box" id="admMsg" style="margin-top:14px">
-                  ${currentUser ? "Pronto para cadastrar partidas." : "Faça login para liberar o cadastro de jogos."}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      const loginBtn = $("#loginBtn");
-      const logoutBtn = $("#logoutBtn");
-      const addGameBtn = $("#addGameBtn");
-
-      if (loginBtn) {
-        loginBtn.onclick = async () => {
-          const email = $("#emailAdm").value.trim();
-          const senha = $("#senhaAdm").value.trim();
-          if (!email || !senha) {
-            alert("Preencha e-mail e senha.");
-            return;
-          }
-          await fazerLogin(email, senha);
-        };
-      }
-
-      if (logoutBtn) {
-        logoutBtn.onclick = async () => {
-          await sair();
-        };
-      }
-
-      if (addGameBtn) {
-        addGameBtn.onclick = adicionarJogo;
-      }
-    }
-
-    function renderTudo() {
-      renderJogos();
-      renderClassificacao();
-      renderAssistente();
-      renderAdm();
-      atualizarStatus();
-    }
-
-    $$(".tab").forEach(btn => {
-      btn.addEventListener("click", () => {
-        $$(".tab").forEach(b => b.classList.remove("active"));
-        $$(".view").forEach(v => v.classList.remove("active"));
-        btn.classList.add("active");
-        $("#view-" + btn.dataset.view).classList.add("active");
-      });
-    });
-
-    async function iniciar() {
-      initWelcome();
-      await verificarSessao();
-      await carregarJogos();
-      renderTudo();
-    }
-
-    iniciar();
-  </script>
+
+<header>
+🏆 Dominators Cup
+</header>
+
+<nav>
+<button onclick="abrir('tabela')">Tabela</button>
+<button onclick="abrir('jogos')">Jogos</button>
+<button onclick="abrir('adm')">ADM</button>
+</nav>
+
+<section id="tabela" class="active">
+
+<h2>Classificação</h2>
+
+<table id="tabelaClassificacao">
+
+<thead>
+<tr>
+<th>Time</th>
+<th>P</th>
+<th>V</th>
+<th>D</th>
+<th>SG</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</section>
+
+<section id="jogos">
+
+<h2>Jogos</h2>
+
+<table id="tabelaJogos">
+
+<thead>
+<tr>
+<th>Time 1</th>
+<th>Placar</th>
+<th>Time 2</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</section>
+
+<section id="adm">
+
+<h2>Painel ADM</h2>
+
+<div class="card">
+
+<input id="email" placeholder="Email">
+<input id="senha" type="password" placeholder="Senha">
+
+<button onclick="login()">Entrar</button>
+
+</div>
+
+<div class="card">
+
+<h3>Adicionar jogo</h3>
+
+<input id="time1" placeholder="Time 1">
+<input id="g1" type="number" placeholder="Gols time 1">
+
+<br>
+
+<input id="time2" placeholder="Time 2">
+<input id="g2" type="number" placeholder="Gols time 2">
+
+<br><br>
+
+<button onclick="addJogo()">Adicionar</button>
+
+</div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
+
+<script>
+
+const { Client, Databases, Account, ID } = Appwrite;
+
+const client = new Client();
+
+client
+.setEndpoint("https://sfo.cloud.appwrite.io/v1")
+.setProject("69acaf3f003a7c46d555");
+
+const account = new Account(client);
+const databases = new Databases(client);
+
+const DATABASE_ID = "69acb01700212f425e07";
+const COLLECTION_ID = "matches";
+
+let usuario = null;
+
+async function verificarLogin(){
+
+try{
+usuario = await account.get();
+}
+catch{
+usuario=null;
+}
+
+}
+
+async function login(){
+
+const email=document.getElementById("email").value;
+const senha=document.getElementById("senha").value;
+
+try{
+
+await account.createEmailPasswordSession(email,senha);
+
+alert("Login feito");
+
+usuario=await account.get();
+
+}
+catch(e){
+alert(e.message);
+}
+
+}
+
+async function addJogo(){
+
+if(!usuario){
+alert("Faça login primeiro");
+return;
+}
+
+const time1=document.getElementById("time1").value;
+const time2=document.getElementById("time2").value;
+const gols1=parseInt(document.getElementById("g1").value);
+const gols2=parseInt(document.getElementById("g2").value);
+
+try{
+
+await databases.createDocument(
+DATABASE_ID,
+COLLECTION_ID,
+ID.unique(),
+{
+time1,
+time2,
+gols1,
+gols2
+}
+);
+
+alert("Jogo adicionado");
+
+carregarJogos();
+
+}
+catch(e){
+alert(e.message);
+}
+
+}
+
+async function carregarJogos(){
+
+const tabela=document.querySelector("#tabelaJogos tbody");
+
+tabela.innerHTML="";
+
+const res=await databases.listDocuments(
+DATABASE_ID,
+COLLECTION_ID
+);
+
+res.documents.forEach(j=>{
+
+const tr=document.createElement("tr");
+
+tr.innerHTML=`
+<td>${j.time1}</td>
+<td>${j.gols1} x ${j.gols2}</td>
+<td>${j.time2}</td>
+`;
+
+tabela.appendChild(tr);
+
+});
+
+gerarTabela(res.documents);
+
+}
+
+function gerarTabela(jogos){
+
+const times={};
+
+jogos.forEach(j=>{
+
+if(!times[j.time1]) times[j.time1]={p:0,v:0,d:0,sg:0};
+if(!times[j.time2]) times[j.time2]={p:0,v:0,d:0,sg:0};
+
+times[j.time1].sg += j.gols1 - j.gols2;
+times[j.time2].sg += j.gols2 - j.gols1;
+
+if(j.gols1 > j.gols2){
+
+times[j.time1].p+=3;
+times[j.time1].v++;
+
+times[j.time2].d++;
+
+}
+
+else if(j.gols2 > j.gols1){
+
+times[j.time2].p+=3;
+times[j.time2].v++;
+
+times[j.time1].d++;
+
+}
+
+});
+
+const lista=Object.entries(times).sort((a,b)=>b[1].p - a[1].p);
+
+const tabela=document.querySelector("#tabelaClassificacao tbody");
+
+tabela.innerHTML="";
+
+lista.forEach(([nome,t])=>{
+
+const tr=document.createElement("tr");
+
+tr.innerHTML=`
+<td>${nome}</td>
+<td>${t.p}</td>
+<td>${t.v}</td>
+<td>${t.d}</td>
+<td>${t.sg}</td>
+`;
+
+tabela.appendChild(tr);
+
+});
+
+}
+
+function abrir(id){
+
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+
+document.getElementById(id).classList.add("active");
+
+}
+
+verificarLogin();
+
+carregarJogos();
+
+</script>
+
 </body>
 </html>
